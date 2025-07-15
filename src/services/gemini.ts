@@ -67,7 +67,7 @@ export async function generateAnswer(
     - Seja objetivo;
     - Mantenha um tom educativo e profissional;
     - Cite trechos relevantes do contexto se apropriado;
-    - Se for citar o contexto, utilize o temo "conteúdo da aula";
+    - Se for citar o contexto, utilize o termo "conteúdo compartilhado";
   `.trim();
 
   const response = await gemini.models.generateContent({

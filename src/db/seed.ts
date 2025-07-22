@@ -3,12 +3,14 @@ import { db, sql } from "./connection.ts";
 import { schema } from "./schema/index.ts";
 import { questions } from "./schema/questions.ts";
 import { rooms } from "./schema/rooms.ts";
+import { users } from "./schema/user.ts";
 
 await reset(db, schema);
 
 export const seedSchema = {
   rooms,
   questions,
+  users,
 };
 
 await seed(db, seedSchema).refine((f) => {

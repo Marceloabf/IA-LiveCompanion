@@ -1,12 +1,13 @@
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { users } from "./user.ts";
 
-export const rooms = pgTable("rooms", {
+export const users = pgTable("users", {
   id: uuid().primaryKey().defaultRandom(),
   name: text().notNull(),
-  description: text(),
+  email: text().notNull().unique(),
   createdAt: timestamp().defaultNow().notNull(),
-  userId: uuid()
-    .references(() => users.id)
+  updatedAt: timestamp().defaultNow().notNull(),
+  key: text(),
+  role: text({ enum: ["user", "teacher"] })
+    .default("user")
     .notNull(),
 });

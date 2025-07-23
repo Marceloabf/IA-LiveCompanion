@@ -1,7 +1,9 @@
+import { eq } from "drizzle-orm";
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import z from "zod/v4";
 import { db } from "../../db/connection.ts";
 import { schema } from "../../db/schema/index.ts";
+import { users } from "../../db/schema/user.ts";
 
 export const createUserRoute: FastifyPluginCallbackZod = (app) => {
   app.post(
@@ -11,19 +13,31 @@ export const createUserRoute: FastifyPluginCallbackZod = (app) => {
         body: z.object({
           name: z.string().min(1),
           email: z.email(),
+          password: z.string().min(8),
           key: z.string().optional(),
           role: z.enum(["user", "teacher"]).default("user"),
         }),
       },
     },
     async (request, reply) => {
-      const { name, email, key, role } = request.body;
+      const { name, email, key, role, password } = request.body;
+
+      const existingUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+
+      if (existingUser.length > 0) {
+        return reply.status(409).send({ message: "User already exists." });
+      }
 
       const result = await db
         .insert(schema.users)
         .values({
           name,
           email,
+          password,
           key,
           role,
         })

@@ -7,6 +7,6 @@ export const rooms = pgTable("rooms", {
   description: text(),
   createdAt: timestamp().defaultNow().notNull(),
   userId: uuid()
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
 });

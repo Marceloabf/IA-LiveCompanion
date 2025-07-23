@@ -11,7 +11,7 @@ export const createRoomRoute: FastifyPluginCallbackZod = (app) => {
         body: z.object({
           name: z.string().min(1),
           description: z.string().optional(),
-          userId: z.string().uuid(),
+          userId: z.uuid(),
         }),
       },
     },

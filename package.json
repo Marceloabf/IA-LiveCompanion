@@ -16,6 +16,7 @@
   "type": "module",
   "devDependencies": {
     "@biomejs/biome": "2.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.0.10",
     "drizzle-kit": "^0.31.4",
     "drizzle-seed": "^0.3.1",

@@ -1,5 +1,7 @@
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
+import jwt from "jsonwebtoken";
 import z from "zod/v4";
 import { db } from "../../db/connection.ts";
 import { users } from "../../db/schema/user.ts";
@@ -31,20 +33,33 @@ export const loginRoute: FastifyPluginCallbackZod = (app) => {
       }
 
       const foundUser = user[0];
+      const passwordMatch = await bcrypt.compare(password, foundUser.password);
 
-      //VERIFICAR COM O HASH
-      if (foundUser.password !== password) {
+      if (!passwordMatch) {
         return reply
           .status(401)
           .send({ message: "Invalid email or password." });
       }
 
-      // Return a success response with user details (excluding password)
+      const JWT_SECRET = process.env.JWT_SECRET;
+
+      if (!JWT_SECRET) {
+        throw new Error("JWT_SECRET is not defined in environment variables.");
+      }
+
+      const token = jwt.sign(
+        { userId: foundUser.id, role: foundUser.role },
+        JWT_SECRET,
+        {
+          expiresIn: "1d",
+        }
+      );
+
       return reply.status(200).send({
         userId: foundUser.id,
         name: foundUser.name,
         role: foundUser.role,
-        //TOKEN
+        token,
       });
     }
   );

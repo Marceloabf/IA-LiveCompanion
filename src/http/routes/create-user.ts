@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import z from "zod/v4";
@@ -32,12 +33,14 @@ export const createUserRoute: FastifyPluginCallbackZod = (app) => {
         return reply.status(409).send({ message: "User already exists." });
       }
 
+      const encryptedPassword = await bcrypt.hash(password, 10);
+
       const result = await db
         .insert(schema.users)
         .values({
           name,
           email,
-          password,
+          password: encryptedPassword,
           key,
           role,
         })

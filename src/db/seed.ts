@@ -15,20 +15,33 @@ export const seedSchema = {
 
 await seed(db, seedSchema).refine((f) => {
   return {
+    users: {
+      count: 5,
+      columns: {
+        name: f.fullName(),
+        email: f.email(),
+        password: f.default({ defaultValue: "12345678" }),
+        key: f.uuid(),
+        role: f.valuesFromArray({ values: ["user", "teacher"] }),
+      },
+    },
     rooms: {
       count: 5,
       columns: {
         name: f.companyName(),
         description: f.loremIpsum(),
       },
+      userId: f.uuid(),
     },
     questions: {
       count: 20,
+      userId: f.uuid(),
+      roomId: f.uuid(),
     },
   };
 });
 
 await sql.end();
 
-// biome-ignore lint/suspicious/noConsole: only used in dev
+// biome-ignore lint/suspicious/noConsole: <teste para seed antes de logs estruturados>
 console.log("Database seeded");

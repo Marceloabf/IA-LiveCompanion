@@ -43,3 +43,31 @@ Content-Type: application/json
 {
   "question": "O que é Vue.js e a sua diferença em relação ao Angular?"
 }
+
+###
+
+# Create user
+# @name createUser
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Usuario teste",
+  "email": "teste@teste.com",
+  "password": "password123",
+  "role": "user"
+}
+
+###
+
+# Login
+# @name Login
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "teste@teste.com",
+  "password": "password123"
+}
+
+###

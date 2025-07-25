@@ -9,8 +9,10 @@ import {
 import { env } from "./env.ts";
 import { createQuestionRoute } from "./http/routes/create-question.ts";
 import { createRoomRoute } from "./http/routes/create-rooms.ts";
+import { createUserRoute } from "./http/routes/create-user.ts";
 import { getRoomQuestionsRoute } from "./http/routes/get-room-questions.ts";
 import { getRoomsRoute } from "./http/routes/get-rooms.ts";
+import { loginRoute } from "./http/routes/login.ts";
 import { uploadAudioRoute } from "./http/routes/upload-audio.ts";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
@@ -29,9 +31,11 @@ app.get("/health", () => {
 });
 
 app.register(getRoomsRoute);
-app.register(createRoomRoute);
 app.register(getRoomQuestionsRoute);
+app.register(createUserRoute);
+app.register(createRoomRoute);
 app.register(createQuestionRoute);
 app.register(uploadAudioRoute);
+app.register(loginRoute);
 
 app.listen({ port: env.PORT });

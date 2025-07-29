@@ -5,6 +5,7 @@ import z from "zod/v4";
 import { db } from "../../db/connection.ts";
 import { schema } from "../../db/schema/index.ts";
 import { users } from "../../db/schema/user.ts";
+import { encrypt } from "../../helpers/crypto.helper.ts";
 
 export const createUserRoute: FastifyPluginCallbackZod = (app) => {
   app.post(
@@ -15,7 +16,7 @@ export const createUserRoute: FastifyPluginCallbackZod = (app) => {
           name: z.string().min(1),
           email: z.email(),
           password: z.string().min(8),
-          key: z.string().optional(),
+          key: z.string().min(20).optional(),
           role: z.enum(["user", "teacher"]).default("user"),
         }),
       },
@@ -33,15 +34,19 @@ export const createUserRoute: FastifyPluginCallbackZod = (app) => {
         return reply.status(409).send({ message: "User already exists." });
       }
 
-      const encryptedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
+      let encryptedKey = "";
+      if (key) {
+        encryptedKey = encrypt(key);
+      }
 
       const result = await db
         .insert(schema.users)
         .values({
           name,
           email,
-          password: encryptedPassword,
-          key,
+          password: hashedPassword,
+          key: encryptedKey || undefined,
           role,
         })
         .returning();

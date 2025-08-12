@@ -3,6 +3,7 @@ import type { FastifyPluginCallbackZod } from "fastify-type-provider-zod";
 import { z } from "zod/v4";
 import { db } from "../../db/connection.ts";
 import { schema } from "../../db/schema/index.ts";
+import { decrypt } from "../../helpers/crypto.helper.ts";
 import { generateAnswer, generateEmbeddings } from "../../services/gemini.ts";
 
 export const createQuestionRoute: FastifyPluginCallbackZod = (app) => {
@@ -23,7 +24,19 @@ export const createQuestionRoute: FastifyPluginCallbackZod = (app) => {
       const { roomId } = request.params;
       const { question, userId } = request.body;
 
-      const embeddings = await generateEmbeddings(question);
+      const { key: userKey } = await db
+        .select({ key: schema.users.key })
+        .from(schema.users)
+        .where(eq(schema.users.id, userId))
+        .then((rows) => rows[0]);
+
+      if (!userKey) {
+        throw new Error("User key is required.");
+      }
+
+      const rawKey = decrypt(userKey);
+
+      const embeddings = await generateEmbeddings(question, rawKey);
 
       const embeddingsAsString = `[${embeddings.join(",")}]`;
 

@@ -7,8 +7,16 @@ const gemini = new GoogleGenAI({
 
 const model = "gemini-2.5-flash";
 
-export async function transcribeAudio(audioAsBase64: string, mimeType: string) {
-  const response = await gemini.models.generateContent({
+export async function transcribeAudio(
+  audioAsBase64: string,
+  mimeType: string,
+  userKey: string
+) {
+  const geminiRoomOwner = new GoogleGenAI({
+    apiKey: userKey,
+  });
+
+  const response = await geminiRoomOwner.models.generateContent({
     model,
     contents: [
       {
@@ -30,8 +38,12 @@ export async function transcribeAudio(audioAsBase64: string, mimeType: string) {
   return response.text;
 }
 
-export async function generateEmbeddings(text: string) {
-  const response = await gemini.models.embedContent({
+export async function generateEmbeddings(text: string, userKey: string) {
+  const geminiRoomOwner = new GoogleGenAI({
+    apiKey: userKey,
+  });
+
+  const response = await geminiRoomOwner.models.embedContent({
     model: "text-embedding-004",
     contents: [{ text }],
     config: {

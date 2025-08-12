@@ -11,7 +11,7 @@ export function encrypt(text: string): string {
   const iv = crypto.randomBytes(IV_LENGTH);
   const cipher = crypto.createCipheriv(
     "aes-256-cbc",
-    Buffer.from(ENCRYPTION_KEY),
+    Buffer.from(ENCRYPTION_KEY, "hex"),
     iv
   );
   const encrypted = Buffer.concat([
@@ -33,7 +33,7 @@ export function decrypt(encryptedText: string): string {
 
   const decipher = crypto.createDecipheriv(
     "aes-256-cbc",
-    Buffer.from(ENCRYPTION_KEY),
+    Buffer.from(ENCRYPTION_KEY, "hex"),
     iv
   );
   const decrypted = Buffer.concat([

@@ -58,6 +58,7 @@ export const loginRoute: FastifyPluginCallbackZod = (app) => {
       return reply.status(200).send({
         userId: foundUser.id,
         name: foundUser.name,
+        email: foundUser.email,
         role: foundUser.role,
         token,
       });

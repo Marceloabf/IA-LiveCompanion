@@ -37,8 +37,6 @@ export const uploadAudioRoute: FastifyPluginCallbackZod = (app) => {
       }
 
       const rawKey = decrypt(userKey);
-      // biome-ignore lint/suspicious/noConsole: <debugging>
-      console.log("Raw Key:", rawKey);
 
       const audioBuffer = await audio.toBuffer();
       const audioAsBase64 = audioBuffer.toString("base64");

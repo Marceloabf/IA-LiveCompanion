@@ -14,6 +14,7 @@ import { getRoomQuestionsRoute } from "./http/routes/get-room-questions.ts";
 import { getRoomsRoute } from "./http/routes/get-rooms.ts";
 import { loginRoute } from "./http/routes/login.ts";
 import { uploadAudioRoute } from "./http/routes/upload-audio.ts";
+import { verifyToken } from "./middlewares/verifyToken.ts";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -28,6 +29,14 @@ app.setValidatorCompiler(validatorCompiler);
 
 app.get("/health", () => {
   return { status: "ok" };
+});
+
+app.addHook("onRequest", async (request, reply) => {
+  const publicRoutes = ["/login", "/register", "/health"];
+  if (publicRoutes.includes(request.url)) {
+    return;
+  }
+  await verifyToken(request, reply);
 });
 
 app.register(getRoomsRoute);
